@@ -37,7 +37,7 @@ jobs:
       - name: Correr actualizacion diaria
         working-directory: backend
         env:
-          DATABASE_URL:'sqlite:///./data/mag_dashboard.db'
+          DATABASE_URL: 'sqlite:///./data/mag_dashboard.db'
         run: python -m app.scraper.run_daily_update
 
       - name: Commitear base SQLite actualizada (si aplica)
