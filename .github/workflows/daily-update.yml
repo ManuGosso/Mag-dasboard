@@ -35,10 +35,10 @@ jobs:
           python -m playwright install --with-deps chromium
 
       - name: Correr actualizacion diaria
-        working-directory: backend
-        env:
+          working-directory: backend
+          env:
           DATABASE_URL: 'sqlite:///./data/mag_dashboard.db'
-        run: python -m app.scraper.run_daily_update
+          run: python -m app.scraper.run_daily_update
 
       - name: Commitear base SQLite actualizada (si aplica)
         if: always()
