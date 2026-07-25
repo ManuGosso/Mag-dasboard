@@ -1,0 +1,19 @@
+# Backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/.env
+backend/data/debug/
+# IMPORTANTE: la base inicial se incluye para que el tablero tenga datos al desplegar.
+!backend/data/mag_dashboard.db
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+frontend/out/
+
+# Generales
+.DS_Store
+*.log

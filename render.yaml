@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: mag-dashboard-api
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:///./data/mag_dashboard.db
+      - key: CORS_ORIGINS
+        value: "*"
+
+  - type: web
+    name: mag-dashboard-web
+    runtime: docker
+    plan: free
+    rootDir: frontend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: API_URL
+        value: https://mag-dashboard-qano.onrender.com
+      - key: NEXT_PUBLIC_API_URL
+        value: https://mag-dashboard-qano.onrender.com

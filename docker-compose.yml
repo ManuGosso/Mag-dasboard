@@ -1,0 +1,42 @@
+version: "3.9"
+
+# Levanta todo el stack con un solo comando: docker compose up --build
+# El backend usa SQLite por defecto (persistido en ./backend/data via
+# volumen), asi que no hace falta levantar Postgres para empezar.
+# Si preferis Postgres, descomenta el servicio "db" y cambiá DATABASE_URL.
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:///./data/mag_dashboard.db
+      - CORS_ORIGINS=http://localhost:3000
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  # db:
+  #   image: postgres:16-alpine
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: mag
+  #     POSTGRES_PASSWORD: mag
+  #     POSTGRES_DB: mag_dashboard
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - pg_data:/var/lib/postgresql/data
+
+# volumes:
+#   pg_data:
