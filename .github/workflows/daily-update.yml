@@ -1,28 +1,24 @@
-# Actualizacion diaria automatica de precios (alternativa a cron local).
-#
-# Corre todos los dias, ejecuta el scraper y, si la base es el SQLite por
-# defecto (backend/data/mag_dashboard.db), commitea el archivo actualizado
-# de vuelta al repo para que quede como historico versionado.
-#
-# Si en cambio usas Postgres, configura el secret DATABASE_URL en
-# Settings > Secrets and variables > Actions del repo, y el workflow va a
-# usar esa base en lugar de tocar el archivo SQLite.
-name: Actualizacion diaria de precios MAG
+# Actualización diaria automática de precios MAG
+
+name: Actualización diaria de precios MAG
 
 on:
   schedule:
-    # 23:00 UTC = 20:00 hora Argentina (UTC-3), de lunes a viernes
     - cron: "0 23 * * 1-5"
-  workflow_dispatch: {}  # permite dispararlo a mano desde la pestaña Actions
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   actualizar:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -34,17 +30,16 @@ jobs:
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
 
-       - name: Correr actualizacion diaria
-         working-directory: backend
-         env:
+      - name: Correr actualización diaria
+        working-directory: backend
+        env:
           DATABASE_URL: sqlite:///./data/mag_dashboard.db
-         run: python -m app.scraper.run_daily_update
+        run: python -m app.scraper.run_daily_update
 
-      - name: Commitear base SQLite actualizada (si aplica)
-        if: always()
+      - name: Guardar base SQLite actualizada
         run: |
           git config user.name "mag-dashboard-bot"
           git config user.email "actions@users.noreply.github.com"
           git add backend/data/mag_dashboard.db
-          git diff --cached --quiet || git commit -m "Actualizacion automatica de precios $(date -u +%F)"
+          git diff --cached --quiet || git commit -m "Actualización automática de precios"
           git push
