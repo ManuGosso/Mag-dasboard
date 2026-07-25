@@ -37,11 +37,11 @@ jobs:
       - name: Correr actualizacion diaria
         working-directory: backend
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL || 'sqlite:///./data/mag_dashboard.db' }}
+          DATABASE_URL: 'sqlite:///./data/mag_dashboard.db' 
         run: python -m app.scraper.run_daily_update
 
       - name: Commitear base SQLite actualizada (si aplica)
-        if: ${{ !secrets.DATABASE_URL }}
+        if: always()
         run: |
           git config user.name "mag-dashboard-bot"
           git config user.email "actions@users.noreply.github.com"
